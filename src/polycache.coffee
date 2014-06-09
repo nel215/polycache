@@ -70,6 +70,16 @@ module.exports = class PolyCache
     @drivers[driver].set(key, val, opt)
 
   getAndSet: (key, getCall, opt)->
+    driver = @_knownKeys[key] or @getDriver(key, null, opt)
+    @drivers[driver].get(key, opt)
+    .then((val)=>
+      return val if val?
+
+      getCall()
+      .then((val)=>
+        @drivers[driver].set(key, val, opt)
+      )
+    )
 
   del: (key, opt)->
     driver = @_knownKeys[key] or @getDriver(key, null, opt)

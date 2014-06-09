@@ -17,7 +17,7 @@ module.exports = class Memory
     )
 
   del: (key)->
-    deferred(do ->
+    deferred(->
       delete @memory[key]
       return
     )
