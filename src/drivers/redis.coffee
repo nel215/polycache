@@ -40,6 +40,8 @@ module.exports = class Redis
     d.promise
 
   end: ()->
-    deferred(do =>
-      return @client.end()
-    )
+    deferred @client.end()
+    # @client.on "end", (err)->
+    #   return d.reject(err) if err
+    #   d.resolve()
+    # @client.end()
