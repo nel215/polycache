@@ -1,13 +1,13 @@
 {
   "name": "polycache",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "lib/polycache.js",
   "scripts": {
     "test": "gulp test"
   },
   "author": "muddydixon <muddydixon@gmail.com>",
-  "license": "ISC",
+  "license": "Apache License Version 2.0",
   "dependencies": {
     "deferred": "^0.7.1",
     "memcached": "^0.2.8",
