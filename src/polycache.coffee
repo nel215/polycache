@@ -27,6 +27,8 @@ module.exports = class PolyCache
     @_rules = []
     @_knownKeys = {}
 
+    @defaultDriver = conf.defaultDriver or PolyCache.Memory
+
   addRule: (driver, rule)->
     @_rules.push {driver, rule}
 
@@ -43,7 +45,6 @@ module.exports = class PolyCache
     return true
 
   getDriver: (key, val, opt)->
-    driverName = PolyCache.Memory.name
     for {driver, rule} in @_rules
       # console.log driver, rule
       if key?
@@ -59,7 +60,7 @@ module.exports = class PolyCache
         else if typeof rule.val is "object"
           return driver.name if @compareObject(val, rule.val)
 
-    return driverName
+    return @defaultDriver.name
 
   get: (key, opt)->
     driver = @_knownKeys[key] or @getDriver(key, null, opt)

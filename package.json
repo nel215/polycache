@@ -1,6 +1,6 @@
 {
   "name": "polycache",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "",
   "main": "lib/polycache.js",
   "scripts": {
