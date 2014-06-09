@@ -75,3 +75,39 @@ describe "PolyChart", ->
       .catch((err)->
         done(err)
       )
+
+  describe "File", ->
+    cache = new PolyCache(defaultDriver: PolyCache.File, file: {dir: "./tmp"})
+    it "get and set key, val", (done)->
+      cache.set("key", "val")
+      .then(->
+        cache.get("key")
+      )
+      .then((val)->
+        expect(val).to.be.eql "val"
+        done()
+      )
+      .catch((err)->
+        done(err)
+      )
+
+    it "getAndSet key, call", (done)->
+      cache.getAndSet("key2", ()-> deferred(10))
+      .then((val)->
+        expect(val).to.be.eql 10
+      )
+      .then(->
+        cache.getAndSet("key2", ()-> deferred(20))
+      )
+      .then((val)->
+        expect(val).to.be.eql "10"
+      )
+      .then(->
+        cache.del("key2")
+      )
+      .then(->
+        done()
+      )
+      .catch((err)->
+        done(err)
+      )

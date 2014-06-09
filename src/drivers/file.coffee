@@ -5,19 +5,22 @@ fs              = require "fs"
 Path            = require "path"
 uuid            = require "uuid"
 mkdirp          = require "mkdirp"
+crypto          = require "crypto"
 
 module.exports = class File
   constructor: (config = {})->
     @id = uuid()
-    @filedir = Path.join config.dir or "/tmp", @id
+    @filedir = Path.join config.dir or "./tmp", @id
 
     mkdirp.sync(@filedir)
 
+  toKey: (path)->
+    crypto.createHash("sha1").update(path, "ascii").digest("hex")
+
   get: (key)->
     d = deferred()
-    fs.readFile(Path.join(@filedir, key), "utf8", (err, data)->
-      return d.reject err if err
-      d.resolve data
+    fs.readFile(Path.join(@filedir, @toKey(key)), "utf8", (err, data)->
+      d.resolve if data? then data else undefined
     )
     d.promise
 
@@ -27,7 +30,7 @@ module.exports = class File
     if typeof val isnt 'string'
       _val = JSON.stringify val
 
-    fs.writeFile(Path.join(@filedir, key), _val, {encoding: "utf8"}, (err)->
+    fs.writeFile(Path.join(@filedir, @toKey(key)), _val, {encoding: "utf8"}, (err)->
       return d.reject err if err
       d.resolve val
     )
@@ -35,7 +38,7 @@ module.exports = class File
 
   del: (key)->
     d = deferred()
-    fs.unlink(Path.join(@filedir, key), (err)->
+    fs.unlink(Path.join(@filedir, @toKey(key)), (err)->
       return d.reject err if err
       d.resolve true
     )
