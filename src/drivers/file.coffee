@@ -47,7 +47,7 @@ module.exports = class File
     d.promise
 
   # TODO: the key files are all in filedir so not recurrsive
-  end: ()->
+  close: ()->
     @removeFileRec(@filedir)
 
   removeFileRec: (path)->
@@ -55,7 +55,6 @@ module.exports = class File
 
     files = fs.readdir(path, (err, files)->
       files.filter((f)-> not f.match(/^\.+$/)).forEach (file)->
-        console.log file
         fs.unlinkSync(Path.join(path, file))
 
       fs.rmdir(path, (err)->

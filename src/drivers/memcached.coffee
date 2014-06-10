@@ -36,7 +36,5 @@ module.exports = class Memcached
     )
     d.promise
 
-  end: ()->
-    deferred(do =>
-      return @client.end()
-    )
+  close: ()->
+    deferred @client.end()

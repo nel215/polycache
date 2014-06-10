@@ -86,7 +86,7 @@ module.exports = class PolyCache
     driver = @_knownKeys[key] or @getDriver(key, null, opt)
     @drivers[driver].del(key, opt)
 
-  end: ()->
+  close: ()->
     deferred.map((driver for name, driver of @drivers), (driver)->
-      driver.end()
+      driver.close()
     )

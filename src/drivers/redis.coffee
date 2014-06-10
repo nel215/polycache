@@ -42,5 +42,5 @@ module.exports = class Redis
     )
     d.promise
 
-  end: ()->
+  close: ()->
     deferred @client.end()

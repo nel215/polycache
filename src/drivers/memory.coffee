@@ -22,7 +22,7 @@ module.exports = class Memory
       return
     )
 
-  end: ()->
+  close: ()->
     deferred(
       delete @memory
     )

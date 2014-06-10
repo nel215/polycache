@@ -11,7 +11,7 @@ describe "PolyCache", ->
       driver = new PolyCache.Memory()
       expect(driver).to.be.an.instanceof PolyCache.Memory
 
-      driver.end()
+      driver.close()
       .then(->
         done()
       )
@@ -19,7 +19,7 @@ describe "PolyCache", ->
       driver = new PolyCache.File()
       expect(driver).to.be.an.instanceof PolyCache.File
 
-      driver.end()
+      driver.close()
       .then(->
         done()
       )
@@ -27,7 +27,7 @@ describe "PolyCache", ->
       driver = new PolyCache.Redis()
       expect(driver).to.be.an.instanceof PolyCache.Redis
 
-      driver.end()
+      driver.close()
       .then(->
         done()
       )
@@ -35,7 +35,7 @@ describe "PolyCache", ->
       driver = new PolyCache.Memcached()
       expect(driver).be.an.instanceof PolyCache.Memcached
 
-      driver.end()
+      driver.close()
       .then(->
         done()
       )
@@ -58,7 +58,7 @@ describe "PolyCache", ->
           done()
 
         afterEach (done)->
-          cache.end()
+          cache.close()
           .then(->
             done()
           )
