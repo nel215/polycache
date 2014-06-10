@@ -6,6 +6,7 @@ Path            = require "path"
 uuid            = require "uuid"
 mkdirp          = require "mkdirp"
 crypto          = require "crypto"
+msgpack         = require "msgpack"
 
 module.exports = class File
   constructor: (config = {})->
@@ -19,20 +20,21 @@ module.exports = class File
 
   get: (key)->
     d = deferred()
-    fs.readFile(Path.join(@filedir, @toKey(key)), "utf8", (err, data)->
-      d.resolve if data? then data else undefined
+    fs.readFile(
+      Path.join(@filedir, @toKey(key)),
+      (err, data)->
+        d.resolve if data? then msgpack.unpack(data) else undefined
     )
     d.promise
 
   set: (key, val)->
     d = deferred()
-    _val = val
-    if typeof val isnt 'string'
-      _val = JSON.stringify val
-
-    fs.writeFile(Path.join(@filedir, @toKey(key)), _val, {encoding: "utf8"}, (err)->
-      return d.reject err if err
-      d.resolve val
+    fs.writeFile(
+      Path.join(@filedir, @toKey(key)),
+      msgpack.pack(val),
+      (err)->
+        return d.reject err if err
+        d.resolve val
     )
     d.promise
 

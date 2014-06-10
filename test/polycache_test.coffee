@@ -100,7 +100,7 @@ describe "PolyChart", ->
         cache.getAndSet("key2", ()-> deferred(20))
       )
       .then((val)->
-        expect(val).to.be.eql "10"
+        expect(val).to.be.eql 10
       )
       .then(->
         cache.del("key2")
