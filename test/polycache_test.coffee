@@ -61,7 +61,10 @@ describe "PolyChart", ->
         expect(val).to.be.eql 10
       )
       .then(->
-        cache.getAndSet("key2", ()-> deferred(20))
+        cache.getAndSet("key2", ()->
+          done(new Error("this should not be called"))
+          deferred(20)
+        )
       )
       .then((val)->
         expect(val).to.be.eql 10
@@ -97,7 +100,10 @@ describe "PolyChart", ->
         expect(val).to.be.eql 10
       )
       .then(->
-        cache.getAndSet("key2", ()-> deferred(20))
+        cache.getAndSet("key2", ()->
+          done(new Error("this should not be called"))
+          deferred(20)
+        )
       )
       .then((val)->
         expect(val).to.be.eql 10
@@ -145,7 +151,10 @@ describe "PolyChart", ->
         expect(val).to.be.eql 10
       )
       .then(->
-        cache.getAndSet("key2", ()-> deferred(20))
+        cache.getAndSet("key2", ()->
+          done(new Error("this should not be called"))
+          deferred(20)
+        )
       )
       .then((val)->
         expect(val).to.be.eql "10"
