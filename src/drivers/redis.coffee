@@ -2,6 +2,7 @@
 
 deferred        = require "deferred"
 Redis_          = require "redis"
+msgpack         = require "msgpack"
 
 module.exports = class Redis
   constructor: (config = {})->
@@ -15,17 +16,19 @@ module.exports = class Redis
   get: (key)->
     d = deferred()
     @client.get(key, (err, val)->
-      return d.reject(err) if err
-      d.resolve(val)
+      return d.resolve(null) unless val?
+      if val[0] is "[" or val[0] is "{"
+        val = JSON.parse(val)
+      else
+        val = JSON.parse("[#{val}]")
+
+      d.resolve msgpack.unpack(new Buffer(val))
     )
     d.promise
 
   set: (key, val)->
     d = deferred()
-    _val = val
-    if typeof val isnt 'string'
-      _val = JSON.stringify val
-    @client.set(key, _val, (err)->
+    @client.set(key, msgpack.pack(val).toJSON().toString(), (err)->
       return d.reject(err) if err
       d.resolve(val)
     )
@@ -41,7 +44,3 @@ module.exports = class Redis
 
   end: ()->
     deferred @client.end()
-    # @client.on "end", (err)->
-    #   return d.reject(err) if err
-    #   d.resolve()
-    # @client.end()

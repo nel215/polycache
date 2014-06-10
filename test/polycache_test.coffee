@@ -5,7 +5,7 @@ deferred = require "deferred"
 
 PolyCache = require "../src/polycache"
 
-describe "PolyChart", ->
+describe "PolyCache", ->
   describe "Drivers", ->
     it "memory driver", (done)->
       driver = new PolyCache.Memory()
@@ -40,134 +40,126 @@ describe "PolyChart", ->
         done()
       )
 
-  describe "Memory", ->
-    cache = new PolyCache()
-    it "get and set key, val", (done)->
-      cache.set("key", "val")
-      .then(->
-        cache.get("key")
-      )
-      .then((val)->
-        expect(val).to.be.eql "val"
-        done()
-      )
-      .catch((err)->
-        done(err)
-      )
+  driverSetting =
+    Memory:     {}
+    File:       dir: "./tmp"
+    Redis:
+      host: "localhost"
+      port: 6379
 
-    it "getAndSet key, call", (done)->
-      cache.getAndSet("key2", ()-> deferred(10))
-      .then((val)->
-        expect(val).to.be.eql 10
-      )
-      .then(->
-        cache.getAndSet("key2", ()->
-          done(new Error("this should not be called"))
-          deferred(20)
-        )
-      )
-      .then((val)->
-        expect(val).to.be.eql 10
-      )
-      .then(->
-        cache.del("key2")
-      )
-      .then(->
-        done()
-      )
-      .catch((err)->
-        done(err)
-      )
+  for driver, setting of driverSetting
+    do (driver, setting)->
+      describe driver, ->
+        cache = null
+        beforeEach (done)->
+          cache = new PolyCache(
+            defaultDriver: PolyCache[driver](setting)
+          )
+          done()
 
-  describe "File", ->
-    cache = new PolyCache(defaultDriver: PolyCache.File, file: {dir: "./tmp"})
-    it "get and set key, val", (done)->
-      cache.set("key", "val")
-      .then(->
-        cache.get("key")
-      )
-      .then((val)->
-        expect(val).to.be.eql "val"
-        done()
-      )
-      .catch((err)->
-        done(err)
-      )
+        afterEach (done)->
+          cache.end()
+          .then(->
+            done()
+          )
 
-    it "getAndSet key, call", (done)->
-      cache.getAndSet("key2", ()-> deferred(10))
-      .then((val)->
-        expect(val).to.be.eql 10
-      )
-      .then(->
-        cache.getAndSet("key2", ()->
-          done(new Error("this should not be called"))
-          deferred(20)
-        )
-      )
-      .then((val)->
-        expect(val).to.be.eql 10
-      )
-      .then(->
-        cache.del("key2")
-      )
-      .then(->
-        done()
-      )
-      .catch((err)->
-        done(err)
-      )
+        it "set and get object", (done)->
+          key = "#{driver}-object"
+          val = {name: "muddydixon", age: 35}
+          cache.set(key, val)
+          .then(->
+            cache.get(key)
+          )
+          .then((val)->
+            expect(val).to.be.eql val
+            done()
+          )
+          .catch((err)->
+            done(err)
+          )
 
-  describe "Redis", ->
-    cache = null
-    beforeEach (done)->
-      cache = new PolyCache(
-        defaultDriver: PolyCache.Redis
-        redis:
-          host: "localhost"
-          port: 6379
-      )
-      done()
+        it "set and get Array", (done)->
+          key = "#{driver}-object"
+          val = [10, 20, "name"]
+          cache.set(key, val)
+          .then(->
+            cache.get(key)
+          )
+          .then((val)->
+            expect(val).to.be.eql val
+            done()
+          )
+          .catch((err)->
+            done(err)
+          )
 
-    it "get and set key, val", (done)->
-      cache.set("key", "val")
-      .then(->
-        cache.get("key")
-      )
-      .then((val)->
-        expect(val).to.be.eql "val"
-        cache.end()
-      )
-      .then(->
-        done()
-      )
-      .catch((err)->
-        done(err)
-      )
+        it "set and get number as string", (done)->
+          key = "#{driver}-number-string"
+          val = "10"
+          cache.set(key, val)
+          .then(->
+            cache.get(key)
+          )
+          .then((val)->
+            expect(val).to.be.eql val
+            done()
+          )
+          .catch((err)->
+            done(err)
+          )
 
-    it "getAndSet key, call", (done)->
-      cache.getAndSet("key2", ()-> deferred(10))
-      .then((val)->
-        expect(val).to.be.eql 10
-      )
-      .then(->
-        cache.getAndSet("key2", ()->
-          done(new Error("this should not be called"))
-          deferred(20)
-        )
-      )
-      .then((val)->
-        expect(val).to.be.eql "10"
-      )
-      .then(->
-        cache.del("key2")
-      )
-      .then(->
-        cache.end()
-      )
-      .then(->
-        done()
-      )
-      .catch((err)->
-        done(err)
-      )
+        it "set and get double number", (done)->
+          key = "#{driver}-number-string"
+          val = 0.0005
+          cache.set(key, val)
+          .then(->
+            cache.get(key)
+          )
+          .then((val)->
+            expect(val).to.be.eql val
+            done()
+          )
+          .catch((err)->
+            done(err)
+          )
+
+        it "set and get number", (done)->
+          key = "#{driver}-number"
+          val = 10
+          cache.set(key, 10)
+          .then(->
+            cache.get(key)
+          )
+          .then((val)->
+            expect(val).to.be.eql 10
+            done()
+          )
+          .catch((err)->
+            done(err)
+          )
+
+        it "getAndSet key, call", (done)->
+          key = "#{driver}-getAndSet"
+          val = 10
+          cache.getAndSet(key, ()-> deferred(val))
+          .then((val)->
+            expect(val).to.be.eql val
+          )
+          .then(->
+            cache.getAndSet(key, ()->
+              done(new Error("this should not be called"))
+              deferred(20)
+            )
+          )
+          .then((val)->
+            expect(val).to.be.eql val
+          )
+          .then(->
+            cache.del(key)
+          )
+          .then(->
+            done()
+          )
+          .catch((err)->
+            done(err)
+          )
