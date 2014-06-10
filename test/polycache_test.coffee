@@ -52,9 +52,11 @@ describe "PolyCache", ->
       describe driver, ->
         cache = null
         beforeEach (done)->
-          cache = new PolyCache(
-            defaultDriver: PolyCache[driver](setting)
-          )
+          conf =
+            defaultDriver: PolyCache[driver]
+          conf[driver.toLowerCase()] = setting
+
+          cache = new PolyCache(conf)
           done()
 
         afterEach (done)->
