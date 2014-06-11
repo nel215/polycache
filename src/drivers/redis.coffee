@@ -20,9 +20,9 @@ module.exports = class Redis
       if val[0] is "[" or val[0] is "{"
         val = JSON.parse(val)
       else
-        val = JSON.parse("[#{val}]")
+        val = msgpack.unpack(new Buffer(JSON.parse("[#{val}]")))
 
-      d.resolve msgpack.unpack(new Buffer(val))
+      d.resolve val
     )
     d.promise
 
