@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/polycache.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "grunt test"
   },
   "author": "muddydixon <muddydixon@gmail.com>",
   "license": "Apache License Version 2.0",
@@ -19,11 +19,10 @@
   "devDependencies": {
     "chai": "^1.9.1",
     "coffee-script": "^1.7.1",
-    "gulp": "^3.7.0",
-    "gulp-coffee": "^2.0.1",
-    "gulp-mocha": "^0.4.1",
-    "gulp-plumber": "^0.6.2",
-    "gulp-util": "^2.2.16",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-coffee": "^0.10.1",
+    "grunt-simple-mocha": "^0.4.0",
     "mocha": "^1.20.1"
   }
 }
