@@ -3,15 +3,13 @@
 deferred        = require "deferred"
 fs              = require "fs"
 Path            = require "path"
-uuid            = require "uuid"
 mkdirp          = require "mkdirp"
 crypto          = require "crypto"
 msgpack         = require "msgpack"
 
 module.exports = class File
   constructor: (config = {})->
-    @id = uuid()
-    @filedir = Path.join config.dir or "./tmp", @id
+    @filedir = Path.join config.dir or "./tmp"
 
     mkdirp.sync(@filedir)
 
