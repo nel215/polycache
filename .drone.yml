@@ -1,0 +1,5 @@
+image: node
+script:
+  - npm install
+  - npm test
+
