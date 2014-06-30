@@ -165,3 +165,34 @@ describe "PolyCache", ->
           .catch((err)->
             done(err)
           )
+
+  describe "no cache", ->
+    it "return null if noCache get", (done)->
+      [key, val] = ["mykey", "myval"]
+      driver = new PolyCache(noCache: true)
+      driver.set(key, val)
+      .then(->
+        driver.get(key)
+      )
+      .then((val)->
+        expect(val).to.be.eql null
+        done()
+      )
+      .finally(->
+        driver.close()
+      )
+
+    it "return null if noCache getAndSet", (done)->
+      [key, val] = ["mykey", "myval"]
+      driver = new PolyCache(noCache: true)
+      driver.set(key, val)
+      .then(->
+        driver.getAndSet(key, -> deferred("newval"))
+      )
+      .then((val)->
+        expect(val).to.be.eql "newval"
+        done()
+      )
+      .finally(->
+        driver.close()
+      )

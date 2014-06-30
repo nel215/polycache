@@ -28,6 +28,7 @@ module.exports = class PolyCache
     @_knownKeys = {}
 
     @defaultDriver = conf.defaultDriver or PolyCache.Memory
+    @noCache = process.env.NO_CACHE or conf.noCache or false
 
   addRule: (driver, rule)->
     @_rules.push {driver, rule}
@@ -63,6 +64,7 @@ module.exports = class PolyCache
     return @defaultDriver.name
 
   get: (key, opt)->
+    return null if @noCache
     driver = @_knownKeys[key] or @getDriver(key, null, opt)
     @drivers[driver].get(key, opt)
 
@@ -72,7 +74,10 @@ module.exports = class PolyCache
 
   getAndSet: (key, getCall, opt)->
     driver = @_knownKeys[key] or @getDriver(key, null, opt)
-    @drivers[driver].get(key, opt)
+
+    deferred(
+      if @noCache then null else @drivers[driver].get(key, opt)
+    )
     .then((val)=>
       return val if val?
 
