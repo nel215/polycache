@@ -57,6 +57,20 @@ cache.set("largeCsv:2014-06-01:2014-06-14", bigValue) # to file
 )
 ```
 
+## no cache mode
+
+if you do not use cache in development, so you can give app via env NO_CACHE=true.
+
+```shell
+$ NO_CACHE=true node app.js // it includes poly cache
+```
+
+or give configure:
+
+```coffee
+new PolyCache({noCache: true})
+```
+
 ## Author
 
 Muddy Dixon <muddydixon@gmail.com>

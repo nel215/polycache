@@ -12,7 +12,7 @@ module.exports = (grunt) ->
     coffee:
       options:
         bare: true
-      server:
+      all:
         files:
           "lib/polycache.js":           "src/polycache.coffee"
           "lib/drivers/memory.js":      "src/drivers/memory.coffee"
