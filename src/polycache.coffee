@@ -28,7 +28,7 @@ module.exports = class PolyCache
     @_knownKeys = {}
 
     @defaultDriver = conf.defaultDriver or PolyCache.Memory
-    @noCache = process.env.NO_CACHE or conf.noCache or false
+    @noCache = process.env.NO_CACHE? or conf.noCache or false
 
   addRule: (driver, rule)->
     @_rules.push {driver, rule}

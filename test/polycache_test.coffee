@@ -167,6 +167,16 @@ describe "PolyCache", ->
           )
 
   describe "no cache", ->
+    it "enable noCache when config", ->
+      cache = new PolyCache(noCache: true)
+      expect(cache).to.have.property "noCache", true
+
+    it "enable noCache when process", ->
+      process.env.NO_CACHE=1
+      cache = new PolyCache()
+      expect(cache).to.have.property "noCache", true
+      delete process.env.NO_CACHE
+
     it "return null if noCache get", (done)->
       [key, val] = ["mykey", "myval"]
       driver = new PolyCache(noCache: true)
