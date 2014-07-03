@@ -6,8 +6,8 @@ deferred = require "deferred"
 PolyCache = require "../src/polycache"
 
 describe "PolyCache", ->
-  describe "Drivers", ->
-    it "memory driver", (done)->
+  describe "initialize Drivers", ->
+    it "return memory driver", (done)->
       driver = new PolyCache.Memory()
       expect(driver).to.be.an.instanceof PolyCache.Memory
 
@@ -15,7 +15,7 @@ describe "PolyCache", ->
       .then(->
         done()
       )
-    it "file driver", (done)->
+    it "return file driver", (done)->
       driver = new PolyCache.File()
       expect(driver).to.be.an.instanceof PolyCache.File
 
@@ -23,7 +23,7 @@ describe "PolyCache", ->
       .then(->
         done()
       )
-    it "redis driver", (done)->
+    it "return redis driver", (done)->
       driver = new PolyCache.Redis()
       expect(driver).to.be.an.instanceof PolyCache.Redis
 
@@ -31,7 +31,7 @@ describe "PolyCache", ->
       .then(->
         done()
       )
-    it "memcached driver", (done)->
+    it "return memcached driver", (done)->
       driver = new PolyCache.Memcached()
       expect(driver).be.an.instanceof PolyCache.Memcached
 
