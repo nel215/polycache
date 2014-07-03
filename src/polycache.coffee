@@ -1,35 +1,28 @@
 "use strict"
 
 deferred        = require "deferred"
-
-Memory          = require "./drivers/memory"
-File            = require "./drivers/file"
-Redis           = require "./drivers/redis"
-Memcached       = require "./drivers/memcached"
+Fs              = require "fs"
+Path            = require "path"
 
 # ------------------------------------------------------------
 # @class PolyCache
 #
 module.exports = class PolyCache
-  @File:        File
-  @Redis:       Redis
-  @Memory:      Memory
-  @Memcached:   Memcached
-
   #
   # * @method constructor
-  # * @param conf {Object} 設定
+  # * @param conf {Object} configuration
+  # * @param drivers {Object} user drivers
   #
-  constructor: (conf = {})->
+  constructor: (conf = {}, userDrivers = {})->
     @drivers =
-      Memory: new Memory()
+      Memory: new PolyCache.Memory()
 
-    if conf.memcached
-      @drivers.Memcached = new Memcached(conf.memcache.host)
-    if conf.redis
-      @drivers.Redis = new Redis(host: conf.redis.host, port: conf.redis.port)
-    if conf.file
-      @drivers.File  = new File(dir: conf.file.dir)
+    for name of PolyCache
+      if c = conf[name.toLowerCase()]
+        @drivers[name] = new PolyCache[name](c)
+    for name, driver in userDrivers
+      if c = conf[name.toLowerCase()]
+        @drivers[name] = if typeof driver is "string" then new require(driver)(c) else new driver(c)
 
     @_rules = []
     @_knownKeys = {}
@@ -165,3 +158,10 @@ module.exports = class PolyCache
     deferred.map((driver for name, driver of @drivers), (driver)->
       driver.close()
     )
+
+# load drivers
+driversDir = Path.join(__dirname, "drivers")
+drivers = Fs.readdirSync(driversDir).filter((f)-> not f.match(/^\.+$/))
+for driver in drivers
+  [name, ext] = driver.split(".")
+  PolyCache[name[0].toUpperCase() + name[1...]] = require Path.join(driversDir, name)

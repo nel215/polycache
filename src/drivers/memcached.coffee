@@ -4,7 +4,9 @@ deferred        = require "deferred"
 Memcached_      = require "memcached"
 
 module.exports = class Memcached
-  constructor: (@host, @options)->
+  constructor: (config = {})->
+    @host = config.host
+    @options = config.options
     @client = new Memcached_(@host, @options)
     @client.on 'error', (err)->
       throw err
