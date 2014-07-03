@@ -29,6 +29,13 @@ module.exports = (grunt) ->
         ui: "bdd"
         reporter: "spec"
 
+    docco:
+      options:
+        output: 'docs/'
+        layout: 'classic'
+      all:
+        src: [ 'src/**' ]
+
 
   for name of pkg.devDependencies when name.substring(0, 6) is "grunt-" and name isnt "grunt-cli"
     grunt.loadNpmTasks name
