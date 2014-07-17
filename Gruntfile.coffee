@@ -28,6 +28,7 @@ module.exports = (grunt) ->
       options:
         ui: "bdd"
         reporter: "spec"
+        timeout: 5000
 
     docco:
       options:

@@ -26,11 +26,20 @@ module.exports = class Redis
     )
     d.promise
 
-  set: (key, val)->
+  set: (key, val, opt = {})->
     d = deferred()
-    @client.set(key, msgpack.pack(val).toJSON().toString(), (err)->
-      return d.reject(err) if err
-      d.resolve(val)
+    @client.set(key, msgpack.pack(val).toJSON().toString(), (err)=>
+      unless opt.expire? or opt.expireat?
+        return d.reject(err) if err
+        return d.resolve(val)
+      else
+        call = if opt.expire? then "expire" else "expireat"
+        time = if opt.expire? then (0|opt.expire / 1000) else (0|opt.expireat / 1000)
+
+        @client[call](key, time, (err)->
+          return d.reject(err) if err
+          return d.resolve(val)
+        )
     )
     d.promise
 
