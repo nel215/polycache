@@ -215,3 +215,74 @@ describe "PolyCache", ->
       .finally(->
         driver.close()
       )
+
+  describe "redis expire", ->
+    describe "set a and expire a", ->
+      it "return null after expire", (done)->
+        driver = new PolyCache.Redis()
+        [key, val] = ["mykey", "myval"]
+        driver.set(key, val, {expire: 1000})
+        .then((v)->
+          expect(v).to.be.eql val
+          sleep(2000)
+        )
+        .then(->
+          driver.get(key)
+        )
+        .then((v)->
+          expect(v).to.be.eql null
+          done()
+        )
+        .catch(done)
+
+      it "return null after expireat", (done)->
+        driver = new PolyCache.Redis()
+        [key, val] = ["mykey", "myval"]
+        driver.set(key, val, {expireat: Date.now() + 1000})
+        .then((v)->
+          expect(v).to.be.eql val
+          sleep(2000)
+        )
+        .then(->
+          driver.get(key)
+        )
+        .then((v)->
+          expect(v).to.be.eql null
+          done()
+        )
+        .catch(done)
+
+    describe "getAndSet a and expire a", ->
+      it "return null after expire", (done)->
+        driver = new PolyCache(defaultDriver: PolyCache.Redis, redis: {})
+        [key, val] = ["mykey#{uuid()}", "myval"]
+        driver.getAndSet(key, (-> deferred(val)), {expire: 1000})
+        .then((v)->
+          expect(v).to.be.eql val
+          sleep(2000)
+        )
+        .then(->
+          driver.get(key)
+        )
+        .then((v)->
+          expect(v).to.be.eql null
+          done()
+        )
+        .catch(done)
+
+      it "return null after expireat", (done)->
+        driver = new PolyCache(defaultDriver: PolyCache.Redis, redis: {})
+        [key, val] = ["mykey#{uuid()}", "myval"]
+        driver.getAndSet(key, (-> deferred(val)), {expireat: Date.now() + 1000})
+        .then((v)->
+          expect(v).to.be.eql val
+          sleep(2000)
+        )
+        .then(->
+          driver.get(key)
+        )
+        .then((v)->
+          expect(v).to.be.eql null
+          done()
+        )
+        .catch(done)
