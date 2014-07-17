@@ -2,8 +2,17 @@
 
 {expect} = require "chai"
 deferred = require "deferred"
+uuid     = require "uuid"
 
 PolyCache = require "../src/polycache"
+
+sleep = (msec)->
+  d = deferred()
+  setTimeout(->
+    d.resolve()
+  , msec
+  )
+  d.promise
 
 describe "PolyCache", ->
   describe "initialize Drivers", ->
