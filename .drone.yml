@@ -2,7 +2,10 @@ image: node
 env:
   - PATH=./node_modules/.bin:$PATH
 script:
+  - mysql -uroot -h127.0.0.1 -P 3306 -e 'create database polycache_test'
+  - mysql -uroot -h127.0.0.1 -P 3306 -D polycache_test -e 'create table tmp (id INT)'
   - npm install
   - npm test
 services:
   - redis
+  - mysql
