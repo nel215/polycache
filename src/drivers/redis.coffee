@@ -28,7 +28,7 @@ module.exports = class Redis
 
   set: (key, val, opt = {})->
     d = deferred()
-    @client.set(key, msgpack.pack(val).toJSON().toString(), (err)=>
+    @client.set(key, msgpack.pack(val).toJSON().data.toString(), (err)=>
       unless opt.expire? or opt.expireat?
         return d.reject(err) if err
         return d.resolve(val)
